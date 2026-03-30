@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 36 Quiz 1</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }[data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }[data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }[data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 36 Quiz 1</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData =[
+            // --- Section 1: Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx ---
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO1: Describe the anatomy of the tongue, including surface features, extrinsic and intrinsic musculature, vascular supply, lymphatic drainage, and innervation (motor and sensory). Discuss clinical manifestations of nerve lesions that affect the tongue.",
+                question: "A 24-year-old man is brought to the emergency department after a traumatic injury results in a fractured mandible. During the physical examination, the physician asks the patient to protrude his tongue, and it noticeably deviates to the right side. The physician suspects a nerve injury leading to paralysis and eventual atrophy of one side of the tongue. Which of the following nerves was most likely injured by the trauma?",
+                options: {
+                    A: "Left glossopharyngeal nerve",
+                    B: "Left hypoglossal nerve",
+                    C: "Right facial nerve",
+                    D: "Right glossopharyngeal nerve",
+                    E: "Right hypoglossal nerve"
+                },
+                correctAnswer: "E",
+                rationale: "The hypoglossal nerve (CN XII) innervates the extrinsic and intrinsic muscles of the tongue. Trauma, such as a fractured mandible, may injure this nerve. When protruded, the tongue deviates to the paralyzed side (the side of the lesion) because of the action of the unaffected functional contralateral muscles (specifically, the genioglossus).",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, page 85: \"Clinical Note: Trauma, such as a fractured mandible, may injure the hypoglossal nerve (CN XII), resulting in paralysis and eventual atrophy of one side of the tongue. The tongue deviates to the paralyzed side during protrusion because of the action of the unaffected genioglossus on the other side.\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO1: Describe the anatomy of the tongue, including surface features, extrinsic and intrinsic musculature, vascular supply, lymphatic drainage, and innervation (motor and sensory). Discuss clinical manifestations of nerve lesions that affect the tongue.",
+                question: "A 45-year-old woman presents to the clinic with complaints of altered sensation in her mouth. Neurological examination reveals that general sensation (touch and temperature) is fully intact over the anterior two-thirds of her tongue. However, she has a complete loss of special sensation (taste) on the anterior two-thirds of her tongue. Which of the following nerves is most likely injured?",
+                options: {
+                    A: "Chorda tympani nerve",
+                    B: "Glossopharyngeal nerve",
+                    C: "Hypoglossal nerve",
+                    D: "Lingual nerve",
+                    E: "Vagus nerve"
+                },
+                correctAnswer: "A",
+                rationale: "Special sensation (taste) to the anterior 2/3 of the tongue is provided by the chorda tympani nerve (a branch of CN VII), which travels via the lingual nerve. General sensation to this area is provided by the lingual nerve itself (a branch of CN V3). Since general sensation is intact, the lingual nerve is functioning, but the chorda tympani fibers have been compromised.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, page 86: \"Anterior 2/3 of the tongue: a. General sensation (touch & temperature): lingual nerve (branch of CN V3) b. Special sensation (taste): chorda tympani nerve (branch of CN VII)\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO2: Describe the muscles of mastication, including their function and innervation.",
+                question: "A 35-year-old man is evaluated for weakness in his muscles of mastication following a nerve injury. The physician notes significant weakness specifically when the patient attempts to depress and protract his mandible. Which of the following muscles is primarily responsible for these combined actions?",
+                options: {
+                    A: "Buccinator",
+                    B: "Lateral pterygoid",
+                    C: "Masseter",
+                    D: "Medial pterygoid",
+                    E: "Temporalis"
+                },
+                correctAnswer: "B",
+                rationale: "The lateral pterygoid muscle acts to depress (superior head), elevate (inferior head), and protract (both heads) the mandible. Other muscles of mastication like the temporalis, masseter, and medial pterygoid primarily act to elevate and/or retract the mandible.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 21: \"Lateral pterygoid muscle... Actions: Depression (superior head), elevation (inferior head), protraction (both heads)\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO2: Describe the muscles of mastication, including their function and innervation.",
+                question: "A 28-year-old woman is unable to forcefully elevate or retract her mandible. Electromyography confirms a deficit isolated to the temporalis muscle. Which of the following nerves provides the direct motor innervation to this specific muscle?",
+                options: {
+                    A: "Facial nerve",
+                    B: "Glossopharyngeal nerve",
+                    C: "Hypoglossal nerve",
+                    D: "Mandibular nerve",
+                    E: "Vagus nerve"
+                },
+                correctAnswer: "D",
+                rationale: "All primary muscles of mastication, including the temporalis muscle, are innervated by the mandibular division of the trigeminal nerve (CN V3).",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 19: \"Muscles of Mastication... Primary... Temporalis muscle... All innervated by mandibular nerve (CN V3)\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO3: Describe the structure, function, neurovascular supply, and musculature associated with the hard and soft palates.",
+                question: "A surgeon is preparing to repair a defect in the anterior part of a patient's hard palate. To achieve adequate local anesthesia of the sensory innervation of the anterior part of the hard palate, the surgeon intends to perform a nerve block at the incisive foramen. Which of the following nerves enters the palate through this specific opening?",
+                options: {
+                    A: "Greater palatine nerve",
+                    B: "Lesser palatine nerve",
+                    C: "Lingual nerve",
+                    D: "Nasopalatine nerve",
+                    E: "Pharyngeal nerve"
+                },
+                correctAnswer: "D",
+                rationale: "The nasopalatine nerve provides sensory innervation to the anterior part of the hard palate. It enters the palate by passing through the incisive foramen, which is located posterior to the incisor teeth.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, page 82: \"Nasopalatine nerve – sensory innervation of the anterior part of the hard palate; enters the palate through the incisive foramen\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO3: Describe the structure, function, neurovascular supply, and musculature associated with the hard and soft palates.",
+                question: "A patient is undergoing an evaluation of swallowing mechanics. During swallowing and yawning, a specific muscle acts to elevate the soft palate, thereby preventing food from entering the nasal cavities. Which of the following muscles is responsible for this elevation?",
+                options: {
+                    A: "Levator veli palatini",
+                    B: "Musculus uvulae",
+                    C: "Palatoglossus",
+                    D: "Palatopharyngeus",
+                    E: "Tensor veli palatini"
+                },
+                correctAnswer: "A",
+                rationale: "The levator veli palatini muscle functions to elevate the soft palate during swallowing and yawning.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 55: \"Levator veli palatini muscle... Elevates soft palate during swallowing and yawning\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO4: Describe the major salivary glands, including their location, ducts, and innervation.",
+                question: "A 45-year-old man presents with swelling on the side of his face. The physician determines that the duct of the largest of the three paired salivary glands is blocked. This duct normally crosses the masseter muscle and pierces the buccinator muscle. Into which specific area of the oral cavity does this duct normally empty?",
+                options: {
+                    A: "At the base of the lingual frenulum",
+                    B: "At the sublingual caruncle",
+                    C: "Near the first mandibular premolar",
+                    D: "Near the second maxillary molar",
+                    E: "On the floor of the mouth via multiple minor ducts"
+                },
+                correctAnswer: "D",
+                rationale: "The parotid gland is the largest salivary gland. Its duct (Stenson's duct) crosses the masseter, pierces the buccinator, and empties into the oral cavity near the 2nd maxillary molar.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 39: \"Parotid Gland... Largest of the three paired salivary glands... Drains via parotid (Stenson’s) duct... Empties into oral cavity near 2nd maxillary molar\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO4: Describe the major salivary glands, including their location, ducts, and innervation.",
+                question: "A 55-year-old woman is evaluated for a decrease in the secretions of her salivary glands. Testing indicates a failure of pre-ganglionic parasympathetic secretomotor fibers to stimulate the submandibular ganglion. These pre-ganglionic fibers originate in which of the following cranial nerves?",
+                options: {
+                    A: "Facial nerve (CN VII)",
+                    B: "Glossopharyngeal nerve (CN IX)",
+                    C: "Hypoglossal nerve (CN XII)",
+                    D: "Trigeminal nerve (CN V)",
+                    E: "Vagus nerve (CN X)"
+                },
+                correctAnswer: "A",
+                rationale: "Parasympathetic secretomotor innervation to the submandibular (and sublingual) glands involves pre-ganglionic fibers that originate in the facial nerve (CN VII) and synapse in the submandibular ganglion.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 44: \"Parasympathetic Innervation of Submandibular and Sublingual Glands... Pre-ganglionic fibers... Originate in facial nerve (CN VII)\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO5: Describe the musculature, function, and innervation of the pharynx.",
+                question: "During an anatomical dissection of the pharynx, a medical student is instructed to locate the outer circular layer of musculature. The student identifies the most inferior muscle in this group, noting its attachments to the thyroid cartilage and the cricoid cartilage. Which of the following muscles is the student observing?",
+                options: {
+                    A: "Inferior pharyngeal constrictor",
+                    B: "Middle pharyngeal constrictor",
+                    C: "Palatopharyngeus",
+                    D: "Salpingopharyngeus",
+                    E: "Superior pharyngeal constrictor"
+                },
+                correctAnswer: "A",
+                rationale: "The pharyngeal constrictor muscles form the outer circular layer of the pharynx. The inferior pharyngeal constrictor specifically attaches to the thyroid cartilage and the cricoid cartilage.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 68: \"Pharyngeal Constrictor Muscles... Inferior... Attaches to thyroid cartilage and cricoid cartilage\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO5: Describe the musculature, function, and innervation of the pharynx.",
+                question: "A physician tests a patient's involuntary pharyngeal \"gag\" reflex by providing stimulation to the posterior pharyngeal wall. This stimulation successfully evokes pharyngeal muscle contraction and elevation of the soft palate. Which of the following nerves mediates the afferent (sensory) limb of this reflex?",
+                options: {
+                    A: "Facial nerve",
+                    B: "Glossopharyngeal nerve",
+                    C: "Hypoglossal nerve",
+                    D: "Trigeminal nerve",
+                    E: "Vagus nerve"
+                },
+                correctAnswer: "B",
+                rationale: "The pharyngeal \"gag\" reflex is an involuntary response evoked by stimulation of the posterior pharyngeal wall, tonsillar area, or root of the tongue. The afferent (sensory) limb is carried by the glossopharyngeal nerve (CN IX).",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, slide 75: \"Pharyngeal “Gag” Reflex... Evoked by stimulation of the posterior pharyngeal wall... Afferent limb = glossopharyngeal n. (CN IX)\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO6: Describe the location and organization of lymphoid tissue, including named tonsils, within the oral cavity and pharynx.",
+                question: "A 7-year-old child presents with inflammation of the lymphoid tissue located in the roof and posterior wall of the nasopharynx. The physician notes that this condition (adenoiditis) is obstructing the passage of air through the choanae, making mouth breathing necessary. Which of the following lymphoid structures is inflamed?",
+                options: {
+                    A: "Lingual tonsils",
+                    B: "Palatine tonsils",
+                    C: "Pharyngeal tonsils",
+                    D: "Submandibular lymph nodes",
+                    E: "Tubal tonsils"
+                },
+                correctAnswer: "C",
+                rationale: "The pharyngeal tonsils (adenoids) are located in the roof and posterior wall of the nasopharynx. Inflammation of these tonsils (adenoiditis) can obstruct the passage of air from the nasal cavities through the choanae, making mouth breathing necessary.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, page 91: \"Clinical Note: Inflammation of the pharyngeal tonsils (adenoids) is called adenoiditis. This condition can obstruct the passage of air from the nasal cavities through the choanae into the nasopharynx, making mouth breathing necessary.\""
+            },
+            {
+                section: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx",
+                fullLO: "LO6: Describe the location and organization of lymphoid tissue, including named tonsils, within the oral cavity and pharynx.",
+                question: "A 16-year-old boy is scheduled for a tonsillectomy to remove concentrated collections of lymphoid tissue on each side of the oropharynx. The surgeon will remove the tissue that lies within the tonsillar sinus, which is located between the palatoglossal and palatopharyngeal folds. Which of the following structures is the surgeon removing?",
+                options: {
+                    A: "Lingual tonsils",
+                    B: "Palatine tonsils",
+                    C: "Pharyngeal tonsils",
+                    D: "Submental lymph nodes",
+                    E: "Tubal tonsils"
+                },
+                correctAnswer: "B",
+                rationale: "The palatine tonsils are concentrated collections of lymphoid tissue located on each side of the oropharynx. They lie within the tonsillar sinus between the palatoglossal and palatopharyngeal folds.",
+                source: "Upper GI Tract Anatomy: Oral Cavity, Palate, and Pharynx PDF, page 88: \"Palatine tonsils – concentrated collections of lymphoid tissue on each side of the oropharynx that lie within the tonsillar sinus (between palatoglossal & palatopharyngeal folds)\""
+            },
+
+            // --- Section 2: Anterior Abdominal Wall and Inguinal Region ---
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO1: Identify and describe the fascial layers, muscles, lymphatic drainage, and neurovasculature of the anterior abdominal wall and inguinal region.",
+                question: "A 34-year-old woman presents with a superficial infection on her anterior abdominal wall. The affected area is located superior to the transumbilical plane. Based on the normal lymphatic drainage of the anterolateral abdominal wall, to which of the following lymph node groups will lymph from this area primarily drain?",
+                options: {
+                    A: "Axillary lymph nodes",
+                    B: "Deep inguinal lymph nodes",
+                    C: "External iliac lymph nodes",
+                    D: "Lumbar lymph nodes",
+                    E: "Supericial inguinal lymph nodes"
+                },
+                correctAnswer: "A",
+                rationale: "The transumbilical plane acts as a watershed for lymphatic drainage. Lymph from the anterolateral abdominal wall above the umbilicus primarily drains to the axillary lymph nodes (with some to the parasternal nodes).",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 25: \"Lymphatics of the Anterolateral Abdominal Wall... Transumbilical plane = Watershed... Above umbilicus Primarily drains to axillary lymph nodes\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO1: Identify and describe the fascial layers, muscles, lymphatic drainage, and neurovasculature of the anterior abdominal wall and inguinal region.",
+                question: "During a dissection of the anterolateral abdominal wall, a student makes an incision inferior to the umbilicus. After reflecting the skin and the superficial fatty layer (Camper fascia), the student encounters a deep membranous layer of superficial fascia. What is the correct anatomical name for this deep membranous layer?",
+                options: {
+                    A: "Investing fascia",
+                    B: "Parietal peritoneum",
+                    C: "Scarpa fascia",
+                    D: "Transversalis fascia",
+                    E: "Transversus abdominis aponeurosis"
+                },
+                correctAnswer: "C",
+                rationale: "Inferior to the umbilicus, the superficial fascia of the anterolateral abdominal wall has two layers: a superficial fatty layer known as Camper fascia, and a deep membranous layer known as Scarpa fascia.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 8: \"Fascia of the Anterolateral Abdominal Wall... Inferior to the umbilicus... Superficial fascia has 2 layers: Superficial fatty layer (Camper fascia), Deep membranous layer (Scarpa fascia)\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO2: Explain the function of the abdominal muscles in maintaining posture, respiration, urination/defecation, and parturition, as well as their role in movements of the trunk.",
+                question: "A 45-year-old man relies on the bilateral contraction of his anterolateral abdominal wall muscles to increase intraabdominal pressure (a mechanism known as the Valsalva maneuver). This increase in pressure is required to facilitate which of the following physiological processes?",
+                options: {
+                    A: "Forced expiration",
+                    B: "Quiet inspiration",
+                    C: "Relaxation of the pelvic floor",
+                    D: "Superior tilting of the pelvis",
+                    E: "Trunk extension"
+                },
+                correctAnswer: "A",
+                rationale: "Bilateral contraction of the anterolateral abdominal wall muscles increases intraabdominal pressure (Valsalva maneuver), which is required for respiration (specifically forced expiration), defecation, micturition, vomiting, and parturition.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 14: \"Functions of the Anterolateral Abdominal Wall... Bilateral contraction increases intraabdominal pressure (Valsalva maneuver) required for: Respiration (specifically forced expiration), Defecation...\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO2: Explain the function of the abdominal muscles in maintaining posture, respiration, urination/defecation, and parturition, as well as their role in movements of the trunk.",
+                question: "A physical therapist observes a patient performing trunk rotation exercises. When the patient laterally flexes and rotates his trunk to the left, his left internal oblique muscle contracts. Which of the following muscles works synergistically with the left internal oblique to achieve this trunk rotation?",
+                options: {
+                    A: "Left external oblique",
+                    B: "Left transversus abdominis",
+                    C: "Rectus abdominis",
+                    D: "Right external oblique",
+                    E: "Right internal oblique"
+                },
+                correctAnswer: "D",
+                rationale: "The oblique muscles are by far the most effective rotators of the trunk. During trunk rotation, the external oblique works synergistically with the contralateral internal oblique. Therefore, rotating left utilizes the left internal oblique and the right external oblique.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 15: \"Movement... Oblique muscles are by far the most effective rotators of the trunk... During trunk rotation, the external oblique works synergistically with the contralateral internal oblique.\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO3: Describe potential collateral pathways for venous and arterial blood utilizing vessels of the anterior abdominal wall.",
+                question: "A 60-year-old man with portal hypertension presents to the clinic. Physical examination reveals Caput Medusae, which is characterized by prominently dilated veins radiating outward from his umbilicus. This occurs because blood is forced through portocaval anastomoses. In this region, which of the following veins directly connects the portal venous system to the caval/systemic venous system?",
+                options: {
+                    A: "Deep circumflex iliac veins",
+                    B: "Inferior epigastric veins",
+                    C: "Lateral thoracic veins",
+                    D: "Peri-umbilical veins",
+                    E: "Superior epigastric veins"
+                },
+                correctAnswer: "D",
+                rationale: "Caput medusae is caused by portal hypertension forcing blood through portocaval anastomoses. The para-umbilical veins (in the falciform ligament, portal system) anastomose with the peri-umbilical veins (surrounding the umbilicus superficially, caval/systemic system).",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slides 22-23: \"Portocaval anastomoses... Peri-umbilical v. (surrounding umbilicus superficially)... Caval or Systemic venous system... Para-umbilical v. (in falciform ligament)... Portal venous system... Portal HTN -> Caput Medusae\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO3: Describe potential collateral pathways for venous and arterial blood utilizing vessels of the anterior abdominal wall.",
+                question: "A patient develops a vena cava blockage. Over time, collateral circulation develops to bypass the obstruction, and a prominent anastomotic channel becomes visible on the patient's lateral abdominal wall. This specific channel is the thoraco-epigastric vein. It runs between the lateral thoracic vein and which of the following veins?",
+                options: {
+                    A: "Deep circumflex iliac vein",
+                    B: "Inferior epigastric vein",
+                    C: "Para-umbilical vein",
+                    D: "Peri-umbilical vein",
+                    E: "Superficial epigastric vein"
+                },
+                correctAnswer: "E",
+                rationale: "The thoraco-epigastric vein provides an anastomotic channel between the superficial epigastric vein and the lateral thoracic vein. It serves as an important collateral circulation pathway in the event of a vena cava blockage.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 24: \"Thoraco-epigastric v. between the superficial epigastric v. and the lateral thoracic v... Collateral circulation... Vena cava blockage\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO4: Describe the peritoneal folds on the deep surface of the anterior abdominal wall and identify their contents.",
+                question: "A radiologist reviewing a scan identifies the peritoneal folds located on the internal surface of the anterior abdominal wall. She specifically traces the medial umbilical folds. These folds are formed by which of the following underlying structures?",
+                options: {
+                    A: "Falciform ligament",
+                    B: "Inferior epigastric vessels",
+                    C: "Obliterated umbilical arteries",
+                    D: "Superior epigastric vessels",
+                    E: "Urachus remnant"
+                },
+                correctAnswer: "C",
+                rationale: "The medial umbilical folds cover the medial umbilical ligaments, which are formed by the obliterated umbilical arteries.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 26: \"Medial umbilical fold – covers medial umbilical ligaments... Formed by obliterated umbilical arteries\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO4: Describe the peritoneal folds on the deep surface of the anterior abdominal wall and identify their contents.",
+                question: "During a surgical procedure, the surgeon visualizes the lateral umbilical folds on the deep surface of the anterior abdominal wall. To prevent bleeding, the surgeon must be careful of the structures covered by these specific folds. Which of the following structures are contained within the lateral umbilical folds?",
+                options: {
+                    A: "External iliac arteries",
+                    B: "Inferior epigastric vessels",
+                    C: "Internal thoracic vessels",
+                    D: "Obliterated umbilical arteries",
+                    E: "Urachus"
+                },
+                correctAnswer: "B",
+                rationale: "The lateral umbilical folds cover the inferior epigastric vessels. (The medial folds cover the obliterated umbilical arteries, and the median fold covers the urachus).",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 26: \"Lateral umbilical folds – covers inferior epigastric vessels\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO5: Describe the structure and function of the inguinal canal, including its boundaries and contents. Distinguish between direct and indirect inguinal hernias.",
+                question: "A 25-year-old man is diagnosed with a congenital inguinal hernia. Upon surgical exploration, it is observed that abdominal viscera has pushed through the deep inguinal ring and traversed the inguinal canal inside of the spermatic cord. Relative to the inferior epigastric vessels, where does this type of hernia pass?",
+                options: {
+                    A: "Anterior",
+                    B: "Inferior",
+                    C: "Lateral",
+                    D: "Medial",
+                    E: "Superior"
+                },
+                correctAnswer: "C",
+                rationale: "An indirect (congenital) inguinal hernia occurs when abdominal viscera pushes through the deep inguinal ring, traverses the inguinal canal inside the spermatic cord, and passes lateral to the inferior epigastric vessels.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 56: \"Indirect Inguinal Hernias... Abdominal viscera pushes through the deep inguinal ring... Traverses inguinal canal inside of spermatic cord... Hernia passes lateral to the inferior epigastric vessels\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO5: Describe the structure and function of the inguinal canal, including its boundaries and contents. Distinguish between direct and indirect inguinal hernias.",
+                question: "A 68-year-old man presents with an acquired inguinal hernia. The hernia sac consists of abdominal viscera pushing \"directly\" through a weakness in the abdominal wall known as Hesselbach's triangle. Relative to the inferior epigastric vessels, where does this type of hernia pass?",
+                options: {
+                    A: "Anterior",
+                    B: "Inferior",
+                    C: "Lateral",
+                    D: "Medial",
+                    E: "Superior"
+                },
+                correctAnswer: "D",
+                rationale: "A direct (acquired) inguinal hernia is caused by weakness in the abdominal wall and pushes directly through the Hesselbach triangle. It traverses the inguinal canal outside of the spermatic cord and passes medial to the inferior epigastric vessels.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 55: \"Direct Inguinal Hernias... Abdominal viscera pushes “directly” through Hesselbach triangle... Hernia passes medial to the inferior epigastric vessels... AKA “acquired inguinal hernia”\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO6: Describe the contents of the spermatic cord. Discuss the layered structure of the spermatic cord and relate this to the descent of the testes through the inguinal canal and passage through the anterior body wall.",
+                question: "During the repair of an inguinal hernia, the surgeon dissects the fascial layers of the spermatic cord. The middle layer encountered is the cremaster muscle and fascia, which contracts to draw the testes closer to the body for temperature regulation. This layer is derived from which of the following structures of the anterolateral abdominal wall?",
+                options: {
+                    A: "External oblique aponeurosis",
+                    B: "Internal oblique fascia",
+                    C: "Parietal peritoneum",
+                    D: "Transversalis fascia",
+                    E: "Transversus abdominis aponeurosis"
+                },
+                correctAnswer: "B",
+                rationale: "The spermatic cord has three layers derived from the abdominal wall: the external spermatic fascia (from external oblique), the cremaster muscle and fascia (derived from the internal oblique fascia), and the internal spermatic fascia (derived from transversalis fascia).",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 44: \"Spermatic Cord... Layers... Cremaster muscle and fascia... Derived from internal oblique fascia\""
+            },
+            {
+                section: "Anterior Abdominal Wall and Inguinal Region",
+                fullLO: "LO6: Describe the contents of the spermatic cord. Discuss the layered structure of the spermatic cord and relate this to the descent of the testes through the inguinal canal and passage through the anterior body wall.",
+                question: "Sperm development requires the testes to be 1-2°C cooler than the body. Within the spermatic cord, a specific venous structure cools the blood in the testicular artery on the way to the testis via countercurrent heat exchange. Which of the following is the name of this venous structure?",
+                options: {
+                    A: "Cremasteric vein",
+                    B: "Deep circumflex iliac vein",
+                    C: "Inferior epigastric vein",
+                    D: "Pampiniform venous plexus",
+                    E: "Testicular venous sinus"
+                },
+                correctAnswer: "D",
+                rationale: "The pampiniform venous plexus is a content of the spermatic cord that cools the blood in the testicular artery on the way to the testis (i.e., countercurrent heat exchange), acting as a mechanism for temperature regulation for sperm development.",
+                source: "Anterior Abdominal Wall and Inguinal Region PDF, slide 50: \"Temperature Regulation for Sperm Development... Pampiniform venous plexus: cools blood in testicular artery on the way to the testis (i.e., countercurrent heat exchange)\""
+            },
+
+            // --- Section 3: Upper GI Histology ---
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO1: Describe the general structure of the Gastrointestinal tract. Describe the four main layers: mucosa, submucosa, muscularis, and serosa.",
+                question: "A medical student examines a cross-section of the gastrointestinal tract. She identifies a layer located immediately deep to the mucosa. This layer contains denser connective tissue with larger blood vessels and an autonomic neuronal network known as the Meissner plexus. Which of the following is the anatomical name for this specific layer?",
+                options: {
+                    A: "Adventitia",
+                    B: "Lamina propria",
+                    C: "Muscularis externa",
+                    D: "Serosa",
+                    E: "Submucosa"
+                },
+                correctAnswer: "E",
+                rationale: "The submucosa is the layer of the GI tract located deep to the mucosa. It is characterized by denser connective tissue, larger blood vessels, and the submucosal (Meissner) plexus consisting of autonomic neurons.",
+                source: "Upper GI Histology PDF, slide 9: \"Submucosa (SM)... Contains denser connective tissue with larger blood vessels... Submucosal (Meissner) plexus - Autonomic neurons\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO1: Describe the general structure of the Gastrointestinal tract. Describe the four main layers: mucosa, submucosa, muscularis, and serosa.",
+                question: "Histological analysis of an intraperitoneal organ reveals that its outermost covering consists of a thin sheet of loose connective tissue lined by a layer of simple squamous cells (mesothelium). What is the correct term for this outermost layer?",
+                options: {
+                    A: "Adventitia",
+                    B: "Lamina propria",
+                    C: "Muscularis mucosae",
+                    D: "Serosa",
+                    E: "Submucosa"
+                },
+                correctAnswer: "D",
+                rationale: "The outermost layer of intraperitoneal GI organs is the serosa, which is a thin sheet of loose connective tissue covered by mesothelium (out most cell layer that is composed of simple squamous cells). Extraperitoneal organs are lined instead by adventitia.",
+                source: "Upper GI Histology PDF, slide 14: \"Serosa (S) or Adventitia... Serosa – lines intraperitoneal organs... Mesothelium- out most cell layer that is composed of simple squamous cells\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO2: Describe the histology of the oral cavity.",
+                question: "A biopsy is obtained from the gingiva (gums) and the hard palate. Because these specific areas are subject to considerable friction, the epithelial lining is primarily composed of which of the following?",
+                options: {
+                    A: "Ciliated pseudostratified columnar epithelium",
+                    B: "Keratinized stratified squamous epithelium",
+                    C: "Non-keratinized simple squamous epithelium",
+                    D: "Simple columnar epithelium",
+                    E: "Transitional epithelium"
+                },
+                correctAnswer: "B",
+                rationale: "The oral cavity is lined with stratified squamous epithelium. In areas subject to considerable friction, specifically the gingiva (gums) and the hard palate, the cell layers are keratinized to resist damage.",
+                source: "Upper GI Histology PDF, slide 17: \"Oral Cavity... Lined with stratified squamous epithelium... Keratinized cell layers resist damage and are mainly found on the gingiva (gums) and hard palate... Areas subject to considerable friction\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO2: Describe the histology of the oral cavity.",
+                question: "A histological section of the lip demonstrates a transition from very thin keratinized stratified squamous epithelium to the thick, nonkeratinizing epithelium of the oral mucosa. Which of the following terms best describes this specific transition area?",
+                options: {
+                    A: "Adventitia",
+                    B: "Lamina propria",
+                    C: "Muscularis mucosae",
+                    D: "Serosa",
+                    E: "Vermillion zone"
+                },
+                correctAnswer: "E",
+                rationale: "The lips consist of an external skin surface and an internal oral mucosa. The transition area from very thin keratinized stratified squamous epithelium to the oral mucosa is called the vermillion zone.",
+                source: "Upper GI Histology PDF, slide 18: \"Lips... Vermillion zone – transition from very thin keratinized stratified squamous epithelium to the oral mucosa\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO3: Describe the histology of the tongue. Be able to describe the four types lingual papillae (filiform, fungiform, and vallate).",
+                question: "A physician notes an absence of the most numerous lingual papillae on a patient's tongue. Normally, these papillae provide a rough surface that facilitates the movement of food. They are elongated, conical in shape, heavily keratinized, and uniquely lack taste buds. Which of the following papillae are described?",
+                options: {
+                    A: "Circumvallate papillae",
+                    B: "Filiform papillae",
+                    C: "Foliate papillae",
+                    D: "Fungiform papillae",
+                    E: "Vallate papillae"
+                },
+                correctAnswer: "B",
+                rationale: "Filiform papillae are elongated, conical, heavily keratinized structures that provide a rough surface to facilitate the movement of food. They are the only papillae listed that lack taste buds entirely.",
+                source: "Upper GI Histology PDF, slide 21: \"Filiform papillae – elongated conical shape, heavily keratinized... Provide a rough surface that facilitates movement of food... Lack taste buds\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO3: Describe the histology of the tongue. Be able to describe the four types lingual papillae (filiform, fungiform, and vallate).",
+                question: "A researcher examining the dorsal surface of the tongue identifies papillae that are lightly keratinized and mushroom-shaped. These structures are interspersed among the more numerous filiform papillae. Which of the following is the identity of these structures?",
+                options: {
+                    A: "Filiform papillae",
+                    B: "Foliate papillae",
+                    C: "Fungiform papillae",
+                    D: "Palatine tonsils",
+                    E: "Vallate papillae"
+                },
+                correctAnswer: "C",
+                rationale: "Fungiform papillae are mushroom-shaped structures that are lightly keratinized and interspersed among the filiform papillae.",
+                source: "Upper GI Histology PDF, slide 21: \"Fungiform papillae – lightly keratinized and interspersed among the filiform papillae... Mushroom shaped\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO3: Describe the histology of the tongue. Be able to describe the four types lingual papillae (filiform, fungiform, and vallate).",
+                question: "A histology student observes large papillae located anterior to the terminal sulcus of the tongue. These papillae feature deep clefts (moats) into which minor salivary glands empty. This provides a continuous flow of fluid to flush material and allow the taste buds on the sides of the papillae to respond to new stimuli. Which of the following is the most likely identity of these structures?",
+                options: {
+                    A: "Filiform papillae",
+                    B: "Foliate papillae",
+                    C: "Fungiform papillae",
+                    D: "Palatine tonsils",
+                    E: "Vallate papillae"
+                },
+                correctAnswer: "E",
+                rationale: "Vallate papillae are located anterior to the terminal sulcus. Minor salivary glands empty into the clefts surrounding them, providing a continuous flow of fluid to flush material from the moat, allowing the taste buds to detect new stimuli.",
+                source: "Upper GI Histology PDF, slides 21-22: \"Vallate papillae – located anterior to the terminal sulcus... Minor salivary glands empty into the cleft... Flush material from the moat to allow the taste buds to respond to new stimuli\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO4: Describe the structure, function, and histology of a taste bud.",
+                question: "Taste buds sample the general chemical composition of ingested material and react to five specific stimuli. If a patient ingests a substance containing certain toxins and alkaloids, which of the following taste sensations is primarily triggered?",
+                options: {
+                    A: "Bitter",
+                    B: "Salty",
+                    C: "Savory",
+                    D: "Sour",
+                    E: "Sweet"
+                },
+                correctAnswer: "A",
+                rationale: "Taste buds react to 5 specific stimuli: salty (sodium ions), sour (hydrogen ions), sweet (sugar), savory (amino acids), and bitter (alkaloids and certain toxins).",
+                source: "Upper GI Histology PDF, slide 23: \"Taste buds only react to 5 stimuli... Bitter – alkaloids and certain toxins\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO4: Describe the structure, function, and histology of a taste bud.",
+                question: "A histological section of a fungiform papilla is prepared. Under the microscope, taste buds containing gustatory and support cells are identified. Within which of the following specific tissue layers of the papilla are these taste buds located?",
+                options: {
+                    A: "Lamina propria",
+                    B: "Muscularis externa",
+                    C: "Muscularis mucosae",
+                    D: "Simple columnar epithelium",
+                    E: "Stratified epithelium"
+                },
+                correctAnswer: "E",
+                rationale: "Taste buds are located on the dorsal surface of the tongue within the stratified epithelium.",
+                source: "Upper GI Histology PDF, slide 23: \"Taste buds – sample the general chemical composition of ingested material... Located on the dorsal surface within the stratified epithelium\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO5: Describe the histology of the esophagus. Identify the different layers associated with the esophagus. Describe the esophagogastric junction.",
+                question: "A histological section is taken from the upper one-third of the human esophagus. Microscopic evaluation of the muscularis layer in this specific region will reveal which of the following tissue compositions?",
+                options: {
+                    A: "Exclusively skeletal (striated) muscle",
+                    B: "Exclusively smooth muscle",
+                    C: "Mixed striated and smooth muscle",
+                    D: "Smooth muscle arranged in three distinct layers",
+                    E: "Striated muscle intermixed with mucous neck cells"
+                },
+                correctAnswer: "A",
+                rationale: "The muscularis of the esophagus consists of two layers that transition inferiorly. The upper 1/3 is striated muscle, the middle 1/3 is mixed striated and smooth muscle, and the lower 1/3 is smooth muscle.",
+                source: "Upper GI Histology PDF, slide 41: \"Esophagus: Muscularis... Upper 1/3 is striated muscle... Middle 1/3 is mixed striated and smooth muscle... Lower 1/3 is smooth muscle\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO5: Describe the histology of the esophagus. Identify the different layers associated with the esophagus. Describe the esophagogastric junction.",
+                question: "A 58-year-old man undergoes an upper endoscopy. A biopsy from the lower esophagus reveals that the normal stratified squamous epithelium has undergone metaplasia as a result of chronic exposure to gastric acid (gastroesophageal reflux disease, or GERD). Which of the following epithelia is now seen on this biopsy?",
+                options: {
+                    A: "Ciliated pseudostratified columnar epithelium",
+                    B: "Columnar epithelium with goblet cells",
+                    C: "Keratinized stratified squamous epithelium",
+                    D: "Simple cuboidal epithelium",
+                    E: "Transitional epithelium"
+                },
+                correctAnswer: "B",
+                rationale: "Barrett Esophagus occurs when chronic exposure to gastric acid (GERD) causes the normal stratified squamous epithelium of the esophagus to undergo a metaplasia, becoming columnar epithelium with goblet cells that secrete mucous.",
+                source: "Upper GI Histology PDF, slide 44: \"Barrett Esophagus... If the esophagus is exposed chronic exposure of gastric acid, the esophagus under goes a metaplasia - This can occur in gastroesophageal reflux disease (GERD)... Stratified squamous becomes columnar epithelium with goblet cells\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO6: Describe the histology of the stomach. Identify the different layers associated with the stomach. Identify the different cell types (surface mucous cells, mucous neck cells, parietal cells, chief cells, and G cells).",
+                question: "A histology slide of the stomach mucosa reveals cells that line the lumen and the gastric pits. These cells are highly columnar and secrete a mucous layer to protect the mucosa. Which of the following cell types is being observed?",
+                options: {
+                    A: "Chief cells",
+                    B: "G cells",
+                    C: "Mucous neck cells",
+                    D: "Parietal cells",
+                    E: "Surface mucous cells"
+                },
+                correctAnswer: "E",
+                rationale: "Surface mucous cells line the lumen of the stomach and the gastric pits. Their function is to secrete a mucous layer to protect the mucosa.",
+                source: "Upper GI Histology PDF, slide 50: \"Stomach: Mucosa... Surface mucous cells - Line the the lumen and gastric pits - Secrete mucous layer to protect the mucosa\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO6: Describe the histology of the stomach. Identify the different layers associated with the stomach. Identify the different cell types (surface mucous cells, mucous neck cells, parietal cells, chief cells, and G cells).",
+                question: "A section of a gastric gland is analyzed under high magnification. The pathologist identifies cells that are less columnar than the surface mucous cells and possess round nuclei. These cells include progenitor and immature surface mucous cells and secrete mucus. What is the correct term for these cells?",
+                options: {
+                    A: "Chief cells",
+                    B: "G cells",
+                    C: "Mucous neck cells",
+                    D: "Parietal cells",
+                    E: "Surface mucous cells"
+                },
+                correctAnswer: "C",
+                rationale: "Mucous neck cells are less columnar than surface mucous cells, have round nuclei, secrete mucus, and include progenitor and immature surface mucous cells.",
+                source: "Upper GI Histology PDF, slide 51: \"Mucous Neck Cells... Include progenitor and immature surface mucous cells... Less columnar then the surface mucous cells... Round nuclei... Secrete mucus\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO6: Describe the histology of the stomach. Identify the different layers associated with the stomach. Identify the different cell types (surface mucous cells, mucous neck cells, parietal cells, chief cells, and G cells).",
+                question: "Atrophic gastritis causes a specific cell type in the stomach to become less numerous, resulting in a Vitamin B12 deficiency and pernicious anemia due to the lack of intrinsic factor. Histologically, these affected cells are round and pyramidal with a \"fried egg appearance\" and a highly eosinophilic cytoplasm due to a high density of mitochondria. Which of the following is the cell type?",
+                options: {
+                    A: "Chief cell",
+                    B: "G cell",
+                    C: "Mucous neck cell",
+                    D: "Parietal cell",
+                    E: "Surface mucous cell"
+                },
+                correctAnswer: "D",
+                rationale: "Parietal cells produce hydrochloric acid and intrinsic factor. Intrinsic factor binds Vitamin B12. A loss of parietal cells (atrophic gastritis) leads to B12 deficiency and pernicious anemia. They have a \"fried egg appearance\" and are eosinophilic due to high mitochondria density.",
+                source: "Upper GI Histology PDF, slides 52-53 & 58: \"Parietal Cells... “fried egg appearance”... Cytoplasm is eosinophilic due to high density of mitochondria... Intrinsic factor is also secreted from this cell\" and \"Atrophic Gastritis... Parietal and chief cells become less numerous... Patients will have a Vitamin B12 deficiency - Leads to pernicious anemia\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO6: Describe the histology of the stomach. Identify the different layers associated with the stomach. Identify the different cell types (surface mucous cells, mucous neck cells, parietal cells, chief cells, and G cells).",
+                question: "A histological evaluation of the lower regions of the gastric glands reveals a population of cells with a strongly basophilic appearance due to abundant rough endoplasmic reticulum (RER). These cells secrete pepsinogen, which initiates the hydrolysis of ingested proteins. Which of the following is the most likely identity of these cells?",
+                options: {
+                    A: "Chief cells",
+                    B: "G cells",
+                    C: "Mucous neck cells",
+                    D: "Parietal cells",
+                    E: "Surface mucous cells"
+                },
+                correctAnswer: "A",
+                rationale: "Chief cells predominate in the lower regions of the gastric glands. They contain abundant RER (giving them a basophilic appearance) and secrete pepsinogen, which initiates the hydrolysis of ingested proteins.",
+                source: "Upper GI Histology PDF, slides 54-56: \"Chief Cells... Predominate in the lower regions of the gastric glands... Secrete pepsinogen... Abundant RER... Gives the cell a basophilic appearance... Pepsin initiates the hydrolysis of ingested proteins in the stomach\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO6: Describe the histology of the stomach. Identify the different layers associated with the stomach. Identify the different cell types (surface mucous cells, mucous neck cells, parietal cells, chief cells, and G cells).",
+                question: "A researcher isolates a population of enteroendocrine cells located predominantly in the pylorus of the stomach. These cells secrete a hormone that promotes gastric acid secretion. Which of the following cell types is she observing?",
+                options: {
+                    A: "Chief cells",
+                    B: "D cells",
+                    C: "G cells",
+                    D: "Mucous neck cells",
+                    E: "Parietal cells"
+                },
+                correctAnswer: "C",
+                rationale: "G cells are enteroendocrine cells located in the pylorus. They secrete the hormone gastrin.",
+                source: "Upper GI Histology PDF, slide 57: \"Entroendocrine Cells... In the pylorus they secrete gastrin\" and the corresponding table showing \"G cells | Pylorus | Gastrin\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO7: Describe the histology of the salivary glands.",
+                question: "A biopsy is taken from the largest of the three paired salivary glands. Histological examination reveals that the parenchyma is composed entirely of serous cells that are pyramidal in shape with round nuclei. These cells produce amylase and other proteins. Which of the following glands was biopsied?",
+                options: {
+                    A: "Buccal gland",
+                    B: "Lingual gland",
+                    C: "Parotid gland",
+                    D: "Sublingual gland",
+                    E: "Submandibular gland"
+                },
+                correctAnswer: "C",
+                rationale: "The parotid gland is entirely serous. Serous cells are pyramidal in shape, possess round nuclei, and produce amylase and other proteins.",
+                source: "Upper GI Histology PDF, slides 28 & 33: \"Parotid Gland... Entirely serous... Produces amylase and other proteins\" and \"Serous Cells... Pyramidal in shape... Round nuclei\""
+            },
+            {
+                section: "Upper GI Histology",
+                fullLO: "LO7: Describe the histology of the salivary glands.",
+                question: "A pathologist is examining a section of the submandibular salivary gland, which features a mixed cell type and seromucous secretion. He identifies mucous tubules that appear to be capped by crescent-shaped collections of serous cells. Which of the following terms best describes these specific structures?",
+                options: {
+                    A: "Intercalated ducts",
+                    B: "Musculus uvulae",
+                    C: "Myoepithelial cells",
+                    D: "Serous demilunes",
+                    E: "Striated ducts"
+                },
+                correctAnswer: "D",
+                rationale: "The submandibular gland is a mixed gland that produces a seromucous secretion. A classic histological feature of these mixed units is the \"serous demilunes,\" where mucous tubules appear to be capped by serous cells.",
+                source: "Upper GI Histology PDF, slide 34: \"Submandibular Gland... Mixed cell type... Serous demilunes – mucous tubules appear to be capped by serous cells\""
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Upper GI Tract Anatomy")) btnText = "Upper GI Anatomy";
+                    if (btnText.includes("Anterior Abdominal Wall")) btnText = "Abdominal Wall";
+                    if (btnText.includes("Upper GI Histology")) btnText = "Upper GI Histology";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
